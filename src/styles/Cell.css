@@ -1,0 +1,15 @@
+.black{
+    width: 2vh;
+    height: 2vh;
+    background-image: url("../resources/blackBack.png");
+    border: solid white 1px;
+    pointer-events: all;
+}
+
+.white{
+    width: 2vh;
+    height: 2vh;
+    background-image: url("../resources/whiteBack.png");
+    border: solid black 1px;
+    pointer-events: all;
+}

@@ -1,0 +1,39 @@
+.popup-closed {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 999;
+    display: none;
+    height: 40vh;
+    overflow-y: auto;
+  }
+  
+  .popup-open {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: lightgrey;
+    border: 1px solid #ccc;
+    padding: 20px;
+    z-index: 999;
+    display: block;
+    height: 40vh;
+    overflow-y: auto;
+  }
+
+  #closeButton{
+    margin-right: 90%;
+  }
+  
+  .popup-inner {
+    text-align: center;
+  }
+  
+  .popup button {
+    margin-top: 10px;
+  }

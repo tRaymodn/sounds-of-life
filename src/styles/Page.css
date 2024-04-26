@@ -1,0 +1,35 @@
+#buttonContainer{
+    display: flex;
+    margin-bottom: 3.5%;
+    width: 100%;
+    height: 4vh;
+}
+
+.pageButton{
+    margin: 2%;
+    text-align: center;
+    width: 46%;
+    border-radius: 6%;
+    height: 100%;
+}
+
+.pageButton:hover{
+    cursor: pointer;
+    background-color: darkgrey;
+}
+
+.pageButton:active{
+    transform: translateY(4%);
+}
+
+#header{
+    margin: 0.5%;
+    width: 99%;
+    border: solid black 2px;
+}
+
+#helpButton{
+    text-align: left;
+    margin-right: 94vw;
+    margin-bottom: 0.5vh;
+}
