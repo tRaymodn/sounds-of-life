@@ -37,3 +37,15 @@
   .popup button {
     margin-top: 10px;
   }
+
+  .exampleBoard{
+    height: 10vh;
+    width: 10vh;
+    margin: 2vh;
+  }
+
+  .repBoard{
+    height: 15vh;
+    width: 15vh;
+    margin: 3.5vh;
+  }

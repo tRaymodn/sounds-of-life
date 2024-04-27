@@ -11,7 +11,7 @@
 .boardButtons{
     display: flex;
     flex-wrap: wrap;
-    width: 10%;
+    width: 15%;
     margin-left: 45%;
     margin-right: 45%;
     margin-bottom: 2%;
@@ -27,9 +27,27 @@
 }
 
 .chordBoardInputs{
-
+    display: flex;
+    flex-direction: row;
 }
 
 .speedSlider{
     transform: rotate(180deg);
+}
+
+.halfInputElement{
+    width: 40%;
+    margin-right: 2%;
+    margin-left: 2%;
+}
+
+.spanExamples{
+    margin-right: 20%;
+    margin-left: 20%;
+}
+
+.fullLengthElement{
+    width: 90%;
+    margin-right: 2%;
+    margin-left: 2%;
 }

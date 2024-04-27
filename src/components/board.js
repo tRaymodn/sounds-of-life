@@ -21,6 +21,7 @@ export default class Board extends Component {
             golSpeed: 800,
             rowScale: "dom7",
             colScale: "min7",
+            baseNote: 125,
         }
         this.handleCellClick = this.handleCellClick.bind(this);
         this.idNumber = props.idNumber;
@@ -195,6 +196,10 @@ export default class Board extends Component {
             console.log("boardUpdate - volume");
             return true;
         }
+        else if(prevState.baseNote !== this.state.baseNote){ // when the base note changes
+            console.log("board update - base note change");
+            return true;
+        }
         else if(prevProps.lifePlaying !== this.props.lifePlaying || prevProps.speed !== this.props.speed){ // when global playing or volume changes
             console.log("board update - global playing or volume")
             return true;
@@ -247,8 +252,10 @@ export default class Board extends Component {
             })
         }
         else if(prevState.rowScale !== this.state.rowScale || prevState.colScale !== this.state.colScale){ // if row or column scale changed
-            this.disconnectAllSynths();
-            this.createAudioMap(this.state.size);
+            this.setState({cells: this.createBoard(this.state.size)}, () => {
+                this.disconnectAllSynths();
+                this.createAudioMap(this.state.size); 
+            })
         }
         else if(prevProps.torus !== this.props.torus){ // if wrapping value changed
             this.setState({torus: this.props.torus});
@@ -258,6 +265,12 @@ export default class Board extends Component {
             this.setState({volume: new Tone.Volume(this.props.volume)}, () => {
                 this.connectNewAudio() // this should reconnect the synths to the new volume
             });
+        }
+        else if(prevState.baseNote !== this.state.baseNote){ // if the base note changes, need to update Audio Map
+            this.setState({cells: this.createBoard(this.state.size)}, () => {
+                this.disconnectAllSynths();
+                this.createAudioMap(this.state.size); 
+            })
         }
         else if(prevProps.lifePlaying !== this.props.lifePlaying){ // if global life playing status changes
             if(!this.props.lifePlaying){
@@ -313,7 +326,7 @@ export default class Board extends Component {
     // semitone stuff: freq = Math.pow(2, n/12) * freq0             freq: desired frequency, n: # semitones above, freq0: intial note 
     gliderBoardSounds(row, col){
         // alternating C E G B D | semitone jumps: 4, 3, 4, 3 c3:  130.81     a2:  110
-        let baseNote = 110;
+        let baseNote = this.state.baseNote;
         let jumps = [3,4]
         let newNotes = [baseNote]
         for(let i = 0; i < 7; i++){
@@ -345,7 +358,7 @@ export default class Board extends Component {
     }
 
     gliderBoardMultipleSounds(row, col){
-        let baseNote = 125;
+        let baseNote = this.state.baseNote;
         let jumps = [3,4]
         let newNotes = [baseNote]
         for(let i = 0; i < 7; i++){
@@ -391,7 +404,7 @@ export default class Board extends Component {
             rowJumps = this.scales.maj
         }
 
-        let c3 = 130.81; //could do something with this
+        let c3 = this.state.baseNote; //could do something with this
         let noteOrig = Math.pow(2, row/12)*c3 
         let rowJump = Math.floor(row/(rowJumps.length)) + 1
         let rowChange = row%rowJumps.length + 1;
@@ -431,7 +444,7 @@ export default class Board extends Component {
         // uppper and lower diagonals: where x-y = 1 || y-x = 1
         // upper and lower antidiagonals: where x+y = n || x+y = n+2
 
-        let c3 = 130.81;
+        let c3 = this.state.baseNote;
         let finalNote = c3;
 
         if(row === 0 || row === this.state.size-1 || col === 0 || col === this.state.size-1){ // if on the edges of the board
@@ -565,7 +578,10 @@ export default class Board extends Component {
     }
 
     updateLifeSpeed = (event) => {
-        this.setState({golSpeed: event.target.value})
+        this.setState({golSpeed: event.target.value}, () => {
+           document.getElementById(`speedLabel${this.idNumber}`).innerHTML = "Playing Speed: " + (3000-event.target.value)
+        })
+         
     }
 
     updateRowScale = (event) => {
@@ -580,6 +596,18 @@ export default class Board extends Component {
         })
     }
 
+    changeBaseNote = (event) => {
+        let val = document.getElementById(`baseNoteFrequencyInput${this.idNumber}`).value;
+
+        if(!isNaN(Number(val))){
+            this.setState({baseNote: Number(val)})
+            document.getElementById(`baseNoteFrequencyInput${this.idNumber}`).value = ""
+        }
+        else{
+            // error handling
+        }
+    }
+
     render(){        
         return(
             <div className="boardContainer">
@@ -588,20 +616,37 @@ export default class Board extends Component {
                 <br></br>
                 <div className="boardButtons">
                     <button className="boardButtonElement" onClick={this.playLife}>Life Move</button>
-                    <label htmlFor={"speedSlider" + this.idNumber}>Playing Speed</label>
-                    <input className="speedSlider" type="range" defaultValue={800} id={"speedSlider" + this.idNumber} min={100} max={3000} onMouseUp={this.updateLifeSpeed}></input>
+                    <div>
+                        <label id={"speedLabel" + this.idNumber} htmlFor={"speedSlider" + this.idNumber}>Playing Speed: {3000 - this.state.golSpeed}</label>
+                        <input className="speedSlider" type="range" defaultValue={800} id={"speedSlider" + this.idNumber} min={100} max={3000} onMouseUp={this.updateLifeSpeed}></input>
+                    </div>
                     <button className="boardButtonElement" id={"changeAudioStyleButton" + this.idNumber} onClick={this.changeAudioStyle}>Change Audio Style (Glider Change)</button>
-                    <input className="boardButtonElement" type="text" id="sizeInput" placeholder="Board Size" onChange={this.updateBoard}></input>
-                    {(this.state.type === "chordBoard" || this.state.type === "barber") && (
-                        <div id={"chordBoardInputs" + this.idNumber} className="chordBoardInputs">
-                            <input type="text" id={"chordBoardInputRows" + this.idNumber} placeholder="Row Scale" ></input>
-                            <button id={"rowScaleButton" + this.idNumber} onClick={this.updateRowScale}>Apply Row Scale</button>
-                            <input type="text" id={"chordBoardInputCols" + this.idNumber} placeholder="Column Scale"></input>
-                            <button id={"colScaleButton" + this.idNumber} onClick={this.updateColScale}>Apply Column Scale</button>
-                        </div> 
-                    )}
+                    <div>
+                        <input className="halfInputElement" type="text" id="sizeInput" placeholder="Board Size" onChange={this.updateBoard}></input>
+                        <input className="halfInputElement" type="text" id={"baseNoteFrequencyInput" + this.idNumber} placeholder="Base Note(hz)"></input>
+                    </div>
+                    <div>
+                        <span className="spanExamples">{this.state.size}</span>
+                        <span className="spanExamples">{this.state.baseNote}</span>
+                    </div>
+                    <button className="boardButtonElement" id={"changeBaseNoteButton" + this.idNumber} onClick={this.changeBaseNote}>Update Base Note</button>
                     <label className="boardButtonElement" htmlFor={"volumeSlider" + this.idNumber}>Volume</label>
                     <input id={"volumeSlider" + this.idNumber} type="range" min={-30} max={20} defaultValue={-6} onMouseUp={this.updateVolume}></input> 
+                    <br></br>
+                    {(this.state.type === "chordBoard" || this.state.type === "barber") && (
+                        <div id={"chordBoardInputs" + this.idNumber} className="chordBoardInputs">
+                            <div style={{width: "50%"}}>
+                                <input className="fullLengthElement" type="text" id={"chordBoardInputRows" + this.idNumber} placeholder="Row Scale"></input>
+                                <button id={"rowScaleButton" + this.idNumber} onClick={this.updateRowScale}>Apply Row Scale</button>
+                                <p>Scale: {this.state.rowScale}</p>
+                            </div>
+                            <div style={{width: "50%"}}>
+                               <input className="fullLengthElement" type="text" id={"chordBoardInputCols" + this.idNumber} placeholder="Column Scale"></input>
+                                <button id={"colScaleButton" + this.idNumber} onClick={this.updateColScale}>Apply Column Scale</button> 
+                                <p>Scale: {this.state.colScale}</p>
+                            </div>
+                        </div> 
+                    )}
                 </div>
                 
             </div>
