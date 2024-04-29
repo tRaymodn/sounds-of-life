@@ -174,6 +174,7 @@ export default class Popup extends Component {
           <ul>
             <li>A user can only create the Barber Pole on board  greater than size <b>4</b></li>
             <li>Wrapping must be disabled if creating a Barber Pole on a board of size <b>5</b></li>
+            <li>The current functionality for not playing sounds on a Barber Pole board may cause random, sporatic audio clicks to occur. If this, or any other audio issue occurs, simply <b>refresh the page</b>.</li>
           </ul>
             
         </div>

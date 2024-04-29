@@ -1,27 +1,28 @@
 .popup-closed {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 22%;
+    left: 2%;
     transform: translate(-50%, -50%);
     background-color: white;
     border: 1px solid #ccc;
     padding: 20px;
     z-index: 999;
     display: none;
+    width: 39vw;
     height: 40vh;
     overflow-y: auto;
   }
   
   .popup-open {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 22%;
+    left: 2%;
     background-color: lightgrey;
     border: 1px solid #ccc;
     padding: 20px;
     z-index: 999;
     display: block;
+    width: 39vw;
     height: 40vh;
     overflow-y: auto;
   }

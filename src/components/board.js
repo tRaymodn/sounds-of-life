@@ -233,7 +233,7 @@ export default class Board extends Component {
                 catch(error){
                     console.log("rule did not exist(not really a problem)" + error)
                 }
-                this.styleSheet.insertRule(`#board${this.idNumber} {margin-left: ${50 - this.state.size + 2}%}`, this.idNumber) // change the margin size for this board
+                this.styleSheet.insertRule(`#board${this.idNumber} {margin-left: ${50 - this.state.size/2 + 2}%}`, this.idNumber) // change the margin size for this board
                 if(this.props.context !== null){
                   this.createAudioMap(this.state.size);  
                 }
@@ -316,6 +316,10 @@ export default class Board extends Component {
                 }
             });
         }
+    }
+
+    componentWillUnmount(){
+        this.disconnectAllSynths()
     }
 
     posToSound(row, col){
